@@ -1,0 +1,57 @@
+import { ReferenceSchema } from "../schema/reference/reference.schema";
+import { DuplicatedKeyError } from "../errors/duplicated-key.error";
+import { Class } from "../types/class.type";
+import { Primitive } from "../types/primitive.type";
+import { StaticReference } from "../reference/static.reference";
+import { ClassReference } from "../reference/class.reference";
+import { RessourceNotFoundError } from "../errors/ressource-not-found.error";
+
+export class Container {
+
+    private static _ressources: Array<ReferenceSchema> = [];
+
+    public static get<T>(key: symbol | Class<T>): T | Primitive {
+
+        const symbolKey =  typeof key === 'symbol' ? key : Symbol.for(key.prototype.name);
+        const ref = Container._ressources
+        .find(current => current.selector === symbolKey);
+        if(ref) {
+
+            return ref.ressource.ressource
+        } else {
+
+            throw new RessourceNotFoundError(symbolKey);
+        }
+    }
+
+    public static register<T>(key: Class<T>): Container {
+
+        //checking if not duplicated
+        const selector = Symbol.for(key.prototype.name),
+        isDuplicated = Container._ressources.find(schema => schema.selector === selector);
+
+        if(!isDuplicated) {
+
+            //creating reference
+            const ref = new ClassReference(key);
+            //registrering
+            Container._ressources.push({selector: selector, ressource: ref});
+        }
+            return Container;
+    }
+
+    public static registerStatic(key: string, val: Primitive): Container {
+
+        //checking if not duplicated, and if so if duplicated is not pending (dummy)
+        const selector = Symbol.for(key),
+        isDuplicated = Container._ressources.find(schema => schema.selector === selector);
+        if(!isDuplicated || isDuplicated.ressource._inner === undefined) {
+
+            //creating reference
+            const ref = new StaticReference(val);
+            Container._ressources.push({selector: selector, ressource: ref});
+        }
+            
+            return Container;
+        }
+    }

@@ -1,0 +1,32 @@
+{
+  "name": "express-dependency-injection",
+  "version": "1.0.0",
+  "description": "a dependency injector for express using decorators",
+  "main": "out/index.js",
+  "scripts": {
+    "test": "npm test",
+    "run": "ts-node src/start.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@innersource.soprasteria.com:andy.crepin/express-dependency-injection.git"
+  },
+  "keywords": [
+    "express",
+    "dependency",
+    "injection",
+    "decorators",
+    "typescript"
+  ],
+  "author": "Ndy0",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.16.1",
+    "express": "^4.16.4",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "ts-node": "^8.0.2"
+  }
+}
