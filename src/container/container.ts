@@ -1,5 +1,4 @@
 import { ReferenceSchema } from "../schema/reference/reference.schema";
-import { DuplicatedKeyError } from "../errors/duplicated-key.error";
 import { Class } from "../types/class.type";
 import { Primitive } from "../types/primitive.type";
 import { StaticReference } from "../reference/static.reference";
@@ -12,7 +11,9 @@ export class Container {
 
     public static get<T>(key: symbol | Class<T>): T | Primitive {
 
-        const symbolKey =  typeof key === 'symbol' ? key : Symbol.for(key.prototype.name);
+        const symbolKey =  typeof key === 'symbol' ?
+        key :
+        Symbol.for(Reflect.get(Reflect.getPrototypeOf(key), 'name'));
         const ref = Container._ressources
         .find(current => current.selector === symbolKey);
         if(ref) {
@@ -27,9 +28,8 @@ export class Container {
     public static register<T>(key: Class<T>): Container {
 
         //checking if not duplicated
-        const selector = Symbol.for(key.prototype.name),
+        const selector = Symbol.for(Reflect.get(Reflect.getPrototypeOf(key), 'name')),
         isDuplicated = Container._ressources.find(schema => schema.selector === selector);
-
         if(!isDuplicated) {
 
             //creating reference

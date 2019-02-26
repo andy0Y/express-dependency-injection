@@ -1,6 +1,4 @@
 import { Class } from "../types/class.type";
-import { Container } from "../container/container";
-import { inspect } from "util";
 
 export const Service = () => {
 
@@ -15,13 +13,12 @@ export const Service = () => {
                 argz.push(arg);
             }
         }
-        const bootstraped = class extends cstr {
+        return class extends cstr {
 
             constructor(..._args: any[]) {
 
                 super(...argz);
             }
         }
-        return bootstraped;
     } 
 }

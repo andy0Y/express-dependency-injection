@@ -1,52 +1,56 @@
-import { RouteSchema } from "../../schema/router/route.schema";
 import { Router as ExpressRouter } from 'express';
 import { HttpVerbs } from "../../schema/router/http.verbs.enum";
-import { ExpressMiddleware } from "../../types/function.type";
+import { Response, Request } from "express";
+import { AbstractMiddleware } from "../../middlewares/middleware.abstract";
 
 export abstract class RouteBuilder {
 
-    public static build(router: ExpressRouter, routeSchema: RouteSchema): ExpressRouter {
+    public static build(
+        router: ExpressRouter,
+        path: string,
+        verb: HttpVerbs,
+        middlewares: Array<AbstractMiddleware>,
+        route: (req: Request, res: Response, args?: {body?: Object, args?: Object}) => void) {
 
-        const verb: HttpVerbs = routeSchema.verb,
-        path: string = routeSchema.path,
-        route = new routeSchema.route();
-        let middlewares: Array<ExpressMiddleware> = [];
-        if(!!routeSchema.middlewares) {
+        const middlewaresFuncs = middlewares ?
+        middlewares.map(middleware => middleware.handle()) :
+        [];
+        const handlerNoBody = (req: Request, res: Response) => {
 
-            middlewares = routeSchema.middlewares.map((middlewareSchema) => {
+            route(req, res, {args: req.params});
+        };
+        const handlerWithBody = (req: Request, res: Response) => {
 
-                const middleware =  new middlewareSchema.middleware();
-                return middleware.handle();
-            });
-        }
+            route(req, res, {body: req.body, args: req.params});
+        };
+
         if(verb === HttpVerbs.GET) {
 
-            router.get(path, middlewares, route.handle());
+            router.get(path, middlewaresFuncs, handlerNoBody);
         } else if(verb === HttpVerbs.POST) {
 
-            router.post(path, middlewares, route.handle());
+            router.post(path, middlewaresFuncs, handlerWithBody);
         } else if(verb === HttpVerbs.PUT) {
 
-            router.put(path, middlewares, route.handle());
+            router.put(path, middlewaresFuncs, handlerWithBody);
         } else if(verb === HttpVerbs.DELETE) {
 
-            router.delete(path, middlewares, route.handle());
+            router.delete(path, middlewaresFuncs, handlerNoBody);
         } else if(verb === HttpVerbs.OPTIONS) {
 
-            router.options(path, middlewares, route.handle());
+            router.options(path, middlewaresFuncs, handlerNoBody);
         } else if(verb === HttpVerbs.HEAD) {
 
-            router.head(path, middlewares, route.handle());
+            router.head(path, middlewaresFuncs, handlerNoBody);
         } else if(verb === HttpVerbs.PATCH) {
 
-            router.patch(path, middlewares, route.handle());
+            router.patch(path, middlewaresFuncs, handlerWithBody);
         } else if(verb === HttpVerbs.TRACE) {
 
-            router.trace(path, middlewares, route.handle());
+            router.trace(path, middlewaresFuncs, handlerNoBody);
         } else if(verb === HttpVerbs.CONNECT) {
 
-            router.connect(path, middlewares, route.handle());
+            router.connect(path, middlewaresFuncs, handlerNoBody);
         }
-        return router;
     }
 }
