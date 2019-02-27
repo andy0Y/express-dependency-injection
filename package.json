@@ -4,8 +4,7 @@
   "description": "a dependency injector for express using decorators",
   "main": "out/index.js",
   "scripts": {
-    "test": "npm test",
-    "run": "ts-node src/start.ts"
+    "test": "npm test"
   },
   "repository": {
     "type": "git",
