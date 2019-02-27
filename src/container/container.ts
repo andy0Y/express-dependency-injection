@@ -8,6 +8,7 @@ import { RessourceNotFoundError } from "../errors/ressource-not-found.error";
 export class Container {
 
     private static _ressources: Array<ReferenceSchema> = [];
+    private static _ressourcesProtected: Array<ReferenceSchema> = [];
 
     public static get<T>(key: symbol | Class<T>): T | Primitive {
 
@@ -21,7 +22,15 @@ export class Container {
             return ref.ressource.ressource
         } else {
 
-            throw new RessourceNotFoundError(symbolKey);
+            const protectedRef = Container._ressourcesProtected
+            .find(current => current.selector === symbolKey);
+            if(protectedRef) {
+
+                return protectedRef.ressource.ressource
+            } else {
+
+                throw new RessourceNotFoundError(symbolKey);
+            }
         }
     }
 
@@ -52,6 +61,21 @@ export class Container {
             Container._ressources.push({selector: selector, ressource: ref});
         }
             
-            return Container;
-        }
+        return Container;
     }
+
+    public static registerProtectedStatic(key: string, val: Primitive): Container {
+
+        //checking if not duplicated, and if so if duplicated is not pending (dummy)
+        const selector = Symbol.for(key),
+        isDuplicated = Container._ressourcesProtected.find(schema => schema.selector === selector);
+        if(!isDuplicated || isDuplicated.ressource._inner === undefined) {
+
+            //creating reference
+            const ref = new StaticReference(val);
+            Container._ressourcesProtected.push({selector: selector, ressource: ref});
+        }
+            
+        return Container;
+    }
+}

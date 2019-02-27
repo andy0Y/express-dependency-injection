@@ -23,19 +23,11 @@ export const ExRoute =
         //register a function wrapping the call to class metadata,
         // in reverse order to keep logic simple
         const className = Reflect.get(Object.getOwnPropertyDescriptor(target, 'constructor').value, 'name');
-        if(!! args.middlewares) {
-            
-            const middleList: Array<AbstractMiddleware> = [];
-            args.middlewares.reverse().forEach(middlewareRef => {
 
-                middleList.push(<AbstractMiddleware>Container.get(middlewareRef));
-            });
-            Container.registerStatic(`${className}_${propertyKey}`, middleList);
-        }
-        //registering path and verb to Container :
-        Container.registerStatic(`${className}_${propertyKey}_path`, args.path);
-        Container.registerStatic(`${className}_${propertyKey}_verb`, args.verb);
-        // Reflect.defineMetadata(Symbol.for(`${propertyKey}_path`), args.path, target);
-        // Reflect.defineMetadata(Symbol.for(`${propertyKey}_verb`), args.verb, target);
+        Container.registerProtectedStatic(
+                `${className}_${propertyKey}`,
+                !!args.middlewares ? args.middlewares : []);
+        Container.registerProtectedStatic(`${className}_${propertyKey}_path`, args.path);
+        Container.registerProtectedStatic(`${className}_${propertyKey}_verb`, args.verb);
     }
 }

@@ -24,7 +24,8 @@ export const ExRouter =
     }
     if(!! args.routers) {
 
-        args.routers.forEach(router => Container.register(router));
+        args.routers
+        .forEach(router => Container.register(router));
     }
 
     return (cstr: V) => {
@@ -43,10 +44,10 @@ export const ExRouter =
             if(!! args.routers) {
                 
                 args.routers.forEach(routerRef => {
-                    
-                    const path: string = <string>Container.get(Symbol.for(`${Reflect.get(routerRef, 'name')}_path`)),
-                    subRouter: ExpressRouter = <ExpressRouter>Container.get(Symbol.for(`${Reflect.get(routerRef, 'name')}_router`));
-                    router.use(path, subRouter);
+
+                    const subRouterInfo: {path: string, router: ExpressRouter} =
+                    <{path: string, router: ExpressRouter}>(<AbstractRouter>Container.get(routerRef)).getExpressRouter();
+                    router.use(subRouterInfo.path, subRouterInfo.router);
                 });
             }
             //adding the actual routes to router
@@ -58,25 +59,20 @@ export const ExRouter =
 
                 const path: string = <string>Container.get(Symbol.for(`${className}_${name}_path`)),
                 verb: HttpVerbs = <HttpVerbs>Container.get(Symbol.for(`${className}_${name}_verb`)),
-                middlewares: Array<AbstractMiddleware> = <Array<AbstractMiddleware>>Container.get(Symbol.for(`${className}_${name}`));
+                middlewares: Array<AbstractMiddleware> = 
+                (<Array<symbol>>Container.get(Symbol.for(`${className}_${name}`)))
+                .map(middlewareSymbolKey => <AbstractMiddleware>Container.get(middlewareSymbolKey));
+
                 RouteBuilder.build(router, path, verb, middlewares, classFunctions[name].value);
-                //finally delete hidden values
-                Reflect.deleteMetadata(Symbol.for(`${name}_path`), cstr);
-                Reflect.deleteMetadata(Symbol.for(`${name}_verb`), cstr);
-                Reflect.deleteMetadata(Symbol.for(name), cstr);
             });
 
-            //register router into Container
-            Container.registerStatic(`${Reflect.get(cstr, 'name')}_router`, router)
-            // Reflect.defineMetadata(Symbol.for('router'), router, cstr);
+            return Reflect.decorate([<ClassDecorator>Service()], class extends cstr {
 
-            //register path into Container
-            Container.registerStatic(`${Reflect.get(cstr, 'name')}_path`, args.path)
-            // Reflect.defineMetadata(Symbol.for('path'), args.path, cstr);
+                public getExpressRouter(): {path: string, router: ExpressRouter} | void {
 
-            // then decorate it to inject it's dependencies
-            return Reflect.decorate([<ClassDecorator>Service()], cstr);
-            
+                    return {path: args.path, router: router};
+                }
+            });
         } else {
             
             throw new DecoratorMissusedError('ExRouter', 'anything other than extension of AbstractRouter');

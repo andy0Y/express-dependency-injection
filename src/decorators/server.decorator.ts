@@ -5,7 +5,6 @@ import { Container } from "../container/container";
 import { Router as ExpressRouter, Express } from 'express';
 import express = require("express");
 import { Constructor } from "../types/function.type";
-import { inspect } from "util";
 
 export const ExServer = 
 <T extends Class<AbstractRouter>, U extends Constructor<AbstractServer>>
@@ -16,10 +15,10 @@ export const ExServer =
     return (cstr: U) => {
 
         const app = express();
-        
-        const path: string = <string>Container.get(Symbol.for(`${Reflect.get(args.main, 'name')}_path`)),
-        router: ExpressRouter = <ExpressRouter>Container.get(Symbol.for(`${Reflect.get(args.main, 'name')}_router`));
-        app.use(path, router);
+
+        const subRouterInfo: {path: string, router: ExpressRouter} =
+        <{path: string, router: ExpressRouter}>(<AbstractRouter>Container.get(args.main)).getExpressRouter();
+        app.use(subRouterInfo.path, subRouterInfo.router);
 
         return class extends cstr {
 
