@@ -1,10 +1,12 @@
 {
   "name": "express-dependency-injection",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a dependency injector for express using decorators",
-  "main": "out/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -22,10 +24,10 @@
   "dependencies": {
     "@types/express": "^4.16.1",
     "express": "^4.16.4",
-    "reflect-metadata": "^0.1.13",
-    "typescript": "^3.3.3333"
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "typescript": "^3.3.3333",
     "ts-node": "^8.0.2"
   }
 }

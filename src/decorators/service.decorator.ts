@@ -4,7 +4,7 @@ export const Service = () => {
 
     return <T extends Class<{}>>(cstr: T) => {
         
-        const argz = [];
+        const argz: any[] = [];
         for (let pos = 0; pos < cstr.length; pos++) {
             
             const arg = Reflect.getOwnMetadata(Symbol.for(`${cstr.name}_${pos}`), cstr);
