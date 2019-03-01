@@ -52,18 +52,20 @@ export const ExRouter =
             }
             //adding the actual routes to router
             const className = Reflect.get(cstr, 'name');
-            const classFunctions = Object.getOwnPropertyDescriptors(cstr.prototype)
-            Object.keys(classFunctions)
-            .filter(funcName => funcName !== 'constructor')
-            .forEach(name => {
+            const classFunctions = Object.getOwnPropertyDescriptors(cstr.prototype);
+            Object.entries(classFunctions)
+            .map(([key, value]) => { return {key: key, value: value};})
+            .filter(entrie => entrie.key !== 'constructor' && typeof entrie.value.value === 'function')
+            .forEach(entrie => {
 
-                const path: string = <string>Container.get(Symbol.for(`${className}_${name}_path`)),
-                verb: HttpVerbs = <HttpVerbs>Container.get(Symbol.for(`${className}_${name}_verb`)),
+                const path: string = <string>Container.get(Symbol.for(`${className}_${entrie.key}_path`)),
+                verb: HttpVerbs = <HttpVerbs>Container.get(Symbol.for(`${className}_${entrie.key}_verb`)),
                 middlewares: Array<AbstractMiddleware> = 
-                (<Array<symbol>>Container.get(Symbol.for(`${className}_${name}`)))
+                (<Array<symbol>>Container.get(Symbol.for(`${className}_${entrie.key}`)))
                 .map(middlewareSymbolKey => <AbstractMiddleware>Container.get(middlewareSymbolKey));
 
-                RouteBuilder.build(router, path, verb, middlewares, classFunctions[name].value);
+                // deffering the route binding to the helper
+                RouteBuilder.build(router, path, verb, middlewares, entrie.value.value);
             });
 
             return Reflect.decorate([<ClassDecorator>Service()], class extends cstr {

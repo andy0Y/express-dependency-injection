@@ -18,9 +18,12 @@ export const ExRoute =
         args.middlewares.forEach(middleware => Container.register(middleware));
     }
     
-    return (target: U, propertyKey: string, _descriptor: PropertyDescriptor) => {
+    return (target: U, propertyKey: string, descriptor: PropertyDescriptor) => {
 
-        //register a function wrapping the call to class metadata,
+        // bind the function call to the class before it is retrieved in the router
+        // decorator so that we don't loose context
+        descriptor.value = descriptor.value.bind(target);
+        // register a function wrapping the call to class metadata,
         // in reverse order to keep logic simple
         const className = Reflect.get(Object.getOwnPropertyDescriptor(target, 'constructor').value, 'name');
 

@@ -7,9 +7,9 @@ import { Service } from "./service.decorator";
 
 export const ExRepository = 
 <U extends ModelInterface, T extends Class<RepositoryInterface<U>>>
-() => {
+(): any => {
 
-    (cstr: T) => {
+    return (cstr: T) => {
 
         if(Reflect.get(Reflect.getPrototypeOf(cstr), 'name') === 'Repository') {
     

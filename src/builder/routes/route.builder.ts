@@ -10,20 +10,19 @@ export abstract class RouteBuilder {
         path: string,
         verb: HttpVerbs,
         middlewares: Array<AbstractMiddleware>,
-        route: (req: Request, res: Response, args?: {body?: Object, args?: Object}) => void) {
+        route: (req: Request, res: Response, args?: {body?: Object, params?: Object}) => void) {
 
         const middlewaresFuncs = middlewares ?
         middlewares.map(middleware => middleware.handle()) :
         [];
         const handlerNoBody = (req: Request, res: Response) => {
 
-            route(req, res, {args: req.params});
+            route(req, res, {params: req.params});
         };
         const handlerWithBody = (req: Request, res: Response) => {
 
-            route(req, res, {body: req.body, args: req.params});
+            route(req, res, {body: req.body, params: req.params});
         };
-
         if(verb === HttpVerbs.GET) {
 
             router.get(path, middlewaresFuncs, handlerNoBody);
