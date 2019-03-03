@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "coverage": "nyc -r lcov -e .ts -x \"src/**/*.spec.ts\" mocha -r ts-node/register src/**/*.spec.ts && nyc check-coverage --lines 100 --functions 100 --branches 100 && nyc report --reporter text-lcov | coveralls",
+    "coverage": "nyc -r lcov -e .ts -x \"src/**/*.spec.ts\" mocha -r ts-node/register src/**/*.spec.ts && nyc report --reporter text-lcov | coveralls",
     "build": "tsc"
   },
   "repository": {
