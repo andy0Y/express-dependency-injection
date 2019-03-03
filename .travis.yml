@@ -5,4 +5,4 @@ before_install:
   - npm install -g typescript mocha nyc chai chai-spies ts-node coveralls
 script:
   - npm run-script test
-after_success: npm run coverage
+after_success: npm run-script coverage
