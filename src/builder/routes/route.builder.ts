@@ -12,13 +12,13 @@ export abstract class RouteBuilder {
         middlewares: Array<AbstractMiddleware>,
         route: (req: Request, res: Response, args?: {body?: Object, params?: Object}) => void) {
 
-        const middlewaresFuncs = middlewares ?
-        middlewares.map(middleware => middleware.handle()) :
-        [];
+        const middlewaresFuncs = middlewares.map(middleware => middleware.handle());
+        /* istanbul ignore next */
         const handlerNoBody = (req: Request, res: Response) => {
 
             route(req, res, {params: req.params});
         };
+        /* istanbul ignore next */
         const handlerWithBody = (req: Request, res: Response) => {
 
             route(req, res, {body: req.body, params: req.params});

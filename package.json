@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "npm test",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "coverage": "nyc -r lcov -e .ts -x \"src/**/*.spec.ts\" mocha -r ts-node/register src/**/*.spec.ts && nyc check-coverage --lines 100 --functions 100 --branches 100 && nyc report --reporter text-lcov | coveralls",
     "build": "tsc"
   },
   "repository": {
@@ -27,7 +28,15 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "typescript": "^3.3.3333",
-    "ts-node": "^8.0.2"
+    "@types/chai": "^4.1.7",
+    "@types/chai-spies": "^1.0.0",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "coveralls": "^3.0.3",
+    "mocha": "^6.0.2",
+    "nyc": "^13.3.0",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.3333"
   }
 }

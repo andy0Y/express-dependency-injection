@@ -7,7 +7,6 @@ export class StaticReference implements Reference<Primitive> {
     
     constructor(val: Primitive) {
 
-        false
         this._inner = val;
     }
     

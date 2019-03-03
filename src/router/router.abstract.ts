@@ -1,7 +1,6 @@
 import { Router as ExpressRouter } from 'express';
 import { Request, Response } from "express";
 import { RepositoryInterface } from '../repository/repository.interface';
-import { Repository } from "../mixin/repository.mixin";
 
 export abstract class AbstractRouter {
 

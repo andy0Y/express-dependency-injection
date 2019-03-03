@@ -5,6 +5,7 @@ import { Container } from "../container/container";
 import { Router as ExpressRouter, Express } from 'express';
 import express = require("express");
 import { Constructor } from "../types/function.type";
+import { DecoratorMissusedError } from "../errors/decorator.missused.error";
 
 export const ExServer = 
 <T extends Class<AbstractRouter>, U extends Constructor<AbstractServer>>
@@ -14,15 +15,21 @@ export const ExServer =
     Container.register(args.main);
     return (cstr: U) => {
 
-        const app = express();
+        if(Reflect.get(Reflect.getPrototypeOf(cstr), 'name') === 'AbstractServer') {
 
-        const subRouterInfo: {path: string, router: ExpressRouter} =
-        <{path: string, router: ExpressRouter}>(<AbstractRouter>Container.get(args.main)).getExpressRouter();
-        app.use(subRouterInfo.path, subRouterInfo.router);
-
-        return class extends cstr {
-
-            protected app: Express = app;
+            const app = express();
+    
+            const subRouterInfo: {path: string, router: ExpressRouter} =
+            <{path: string, router: ExpressRouter}>(<AbstractRouter>Container.get(args.main)).getExpressRouter();
+            app.use(subRouterInfo.path, subRouterInfo.router);
+    
+            return class extends cstr {
+    
+                protected app: Express = app;
+            }
+        } else {
+            
+            throw new DecoratorMissusedError('ExServer', 'anything other than extension of AbstractServer');
         }
     }
 }

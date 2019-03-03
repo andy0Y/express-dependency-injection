@@ -26,7 +26,6 @@ export const ExRoute =
         // register a function wrapping the call to class metadata,
         // in reverse order to keep logic simple
         const className = Reflect.get(Object.getOwnPropertyDescriptor(target, 'constructor').value, 'name');
-
         Container.registerProtectedStatic(
                 `${className}_${propertyKey}`,
                 !!args.middlewares ? args.middlewares : []);

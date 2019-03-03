@@ -54,7 +54,8 @@ export class Container {
         //checking if not duplicated, and if so if duplicated is not pending (dummy)
         const selector = Symbol.for(key),
         isDuplicated = Container._ressources.find(schema => schema.selector === selector);
-        if(!isDuplicated || isDuplicated.ressource._inner === undefined) {
+
+        if(!isDuplicated) {
 
             //creating reference
             const ref = new StaticReference(val);
@@ -69,7 +70,7 @@ export class Container {
         //checking if not duplicated, and if so if duplicated is not pending (dummy)
         const selector = Symbol.for(key),
         isDuplicated = Container._ressourcesProtected.find(schema => schema.selector === selector);
-        if(!isDuplicated || isDuplicated.ressource._inner === undefined) {
+        if(!isDuplicated) {
 
             //creating reference
             const ref = new StaticReference(val);
