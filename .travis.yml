@@ -1,8 +1,23 @@
 language: node_js
 node_js:
-  - 'node'
+- node
 before_install:
-  - npm install -g typescript mocha nyc chai chai-spies ts-node coveralls
-script:
-  - npm run-script test
-after_success: npm run-script coverage
+- npm install -g typescript tsc mocha nyc chai chai-spies ts-node coveralls
+jobs:
+  include:
+    - stage: build
+    - script: 
+      - npm run-script build
+    - stage: unit-test
+    - script:
+      - npm run-script test
+    - stage: code-coverage
+    - script:
+      - npm run-script coverage
+deploy:
+  provider: npm
+  email: acrepinpro@gmail.com
+  api_key:
+    secure: nTxuXDrcwwAvnPdSNYq6C3rshyKSltTj1/cmyFVMY7FXWZTZYfrWKxopWn8d9oAliO/u3dtCGPXl4t9Yyr/hp9dFhkUmNpvNMFlKpbDDDmuq7zT/ytngj2x08e4o/netU9SiiXLiUL5eYjHk/1Dy0U+k1LHm0/YCkqeOkaaZp/I5oBpHfVdECNJI6OyA9dqSZVuhaYIcZ7n4QgxqlrGyOggezM1U7oCfz5kMHFLduTdW7qU8jke0F914HgflC3ZH/FJBGiZ6YabPTOmGbSHjzdgo59Lw33udtGviM4phzGYczIV6qiJr5M4qioP2jc0Gh0tTtFRppeFB5I1oZgBdjhwV02mn3igiulX8v9TlAUJ7LWw+UqbFwhLjgGwzTY5VVoNeHNfhbIqQRYRPMlwrEvJ8ettYGo0rZcG5jDIgIqHaLBjZuoo5b5n/BT3Hqb1cpsh3+BwxmUCc3IhHwciLc0b+vw7rRtb3mF51mnsne0bJU+Zai/FlC7eZkSEu7VuRVBkVe74FZyohrS9tYRCtPJmHkk7+zT9UozZODmayhugVWEdLxXIpuCKCQ29NaJYZ66UzWwPjMRWd02LQrQa0542o9orcwxatSnB+ILo0WruvN/vY5ZD6sHw1Hk3Ju5BvvQ2oNxHMB3GVXoZti+X5/vs4MSQ6I45zC8QpjAhMmMo=
+  on:
+    tags: true
