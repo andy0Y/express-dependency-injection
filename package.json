@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@innersource.soprasteria.com:andy.crepin/express-dependency-injection.git"
+    "url": "git@github.com:andy0Y/express-dependency-injection.git"
   },
   "keywords": [
     "express",
